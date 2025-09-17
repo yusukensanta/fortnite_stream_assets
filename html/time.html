@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Twitch Date & Time Overlay</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap');
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: transparent;
+            font-family: 'JetBrains Mono', monospace;
+            overflow: hidden;
+        }
+
+        .datetime-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .datetime-display {
+            background: rgba(30, 100, 200, 0.3);
+            border: none;
+            border-left: 8px solid #00bfff;
+            border-radius: 0px 20px 20px 0px;
+            padding: 30px 18px 30px 25px;
+            box-shadow: -10px 0 30px rgba(30, 100, 200, 0.2);
+            backdrop-filter: blur(12px);
+
+            transform-origin: center;
+            min-width: 280px;
+            width: fit-content;
+            position: relative;
+
+        }
+
+        .datetime-display::after {
+
+            content: '';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 12px;
+            height: 12px;
+            background: #00ff88;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #00ff88;
+        }
+
+        .date-section {
+
+            text-align: left;
+            margin-bottom: 20px;
+            border-bottom: 8px solid rgba(255, 255, 255, 0.6);
+            padding-bottom: 15px;
+        }
+
+        .weekday {
+            font-size: 2.2rem;
+            color: #87ceeb;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+            font-weight: 400;
+            letter-spacing: 1px;
+            line-height: 1;
+
+            text-transform: uppercase;
+        }
+
+        .date {
+            font-size: 4rem;
+            color: #ffffff;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.8);
+            font-weight: 400;
+            margin-top: 8px;
+            line-height: 0.9;
+            letter-spacing: 4px;
+        }
+
+        .time-section {
+            text-align: left;
+        }
+
+        .time {
+
+            font-size: 5.5rem;
+            color: #ffffff;
+            text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.8);
+
+            font-weight: 400;
+            letter-spacing: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 0px;
+            line-height: 0.8;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .time .colon {
+            color: #00bfff;
+            font-size: 0.85em;
+
+            margin: 0 -4px;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+
+        /* QHD-specific optimizations (2560x1440) */
+        @media (min-width: 2560px) and (min-height: 1440px) {
+            .datetime-display {
+                padding: 40px 60px;
+                border-radius: 25px;
+                border: 6px solid #ffffff;
+                min-width: 650px;
+            }
+
+            .weekday {
+                font-size: 3.5rem;
+                letter-spacing: 3px;
+            }
+
+            .date {
+                font-size: 5.5rem;
+            }
+
+            .time {
+                font-size: 11rem;
+                gap: 25px;
+            }
+        }
+
+        /* HD-specific optimizations */
+        @media (min-width: 1280px) and (min-height: 720px) and (max-width: 2559px) {
+            .datetime-display {
+                padding: 35px 50px;
+                border-radius: 22px;
+                border: 5px solid #ffffff;
+
+                min-width: 500px;
+            }
+
+            .weekday {
+                font-size: 3rem;
+                letter-spacing: 3px;
+            }
+
+            .date {
+                font-size: 4.5rem;
+            }
+
+
+            .time {
+                font-size: 9rem;
+                gap: 20px;
+            }
+        }
+
+        /* Full HD optimizations */
+        @media (min-width: 1920px) and (min-height: 1080px) and (max-width: 2559px) {
+
+            .datetime-display {
+                padding: 40px 55px;
+                border-radius: 25px;
+                border: 6px solid #ffffff;
+                min-width: 600px;
+            }
+
+            .weekday {
+
+                font-size: 3.2rem;
+                letter-spacing: 4px;
+            }
+
+            .date {
+                font-size: 5rem;
+            }
+
+            .time {
+
+                font-size: 10rem;
+                gap: 25px;
+            }
+        }
+
+        /* 4K optimizations */
+        @media (min-width: 3840px) and (min-height: 2160px) {
+            .datetime-display {
+                padding: 60px 90px;
+                border-radius: 35px;
+                border: 8px solid #ffffff;
+                min-width: 900px;
+            }
+
+            .weekday {
+
+                font-size: 6rem;
+                letter-spacing: 6px;
+            }
+
+            .date {
+                font-size: 9rem;
+            }
+
+
+            .time {
+                font-size: 16rem;
+                gap: 35px;
+            }
+        }
+
+        /* Responsive scaling */
+
+        @media (max-width: 768px) {
+            .datetime-display {
+                padding: 15px 20px;
+                border-radius: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .datetime-display {
+                padding: 10px 15px;
+                border-radius: 8px;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <div class="datetime-container">
+        <div class="datetime-display">
+
+            <div class="date-section">
+                <div class="weekday" id="weekday">MONDAY</div>
+                <div class="date" id="date">January 1, 2024</div>
+            </div>
+
+            <div class="time-section">
+                <div class="time">
+                    <span id="hours">12</span>
+                    <span class="colon">:</span>
+                    <span id="minutes">00</span>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        function updateDateTime() {
+            const now = new Date();
+
+            // Get weekday
+            const weekdays = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
+            const weekday = weekdays[now.getDay()];
+
+            // Get formatted date (with numeric month)
+            const month = (now.getMonth() + 1).toString().padStart(2, '0');
+
+            const day = now.getDate().toString().padStart(2, '0');
+            const formattedDate = `${month}/${day}`;
+
+            // Get time components (hours and minutes only)
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+
+            // Update DOM elements
+            document.getElementById('weekday').textContent = weekday;
+
+            document.getElementById('date').textContent = formattedDate;
+            document.getElementById('hours').textContent = hours;
+            document.getElementById('minutes').textContent = minutes;
+        }
+
+        // Update immediately and then every minute
+        updateDateTime();
+        setInterval(updateDateTime, 60000);
+
+        // Optional: Add click handler for manual refresh
+        document.addEventListener('click', updateDateTime);
+    </script>
+</body>
+</html>
